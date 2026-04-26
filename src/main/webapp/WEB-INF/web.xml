@@ -1,0 +1,20 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+
+  <display-name>Loan Management System</display-name>
+
+  <!-- ================= APPLICATION NAME ================= -->
+  <context-param>
+    <param-name>applicationName</param-name>
+    <param-value>LOAN SYSTEM | SMART FINANCE</param-value>
+  </context-param>
+
+  <!-- ================= DEFAULT HOME PAGE ================= -->
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+
+</web-app>
