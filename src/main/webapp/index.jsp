@@ -44,8 +44,11 @@
 <%-- ================= CONTENT ================= --%>
 <section>
     <h2>Who We Are</h2>
-    <p>We are a modern loan management system built using Jakarta EE, designed to simplify financial operations.</p>
+    <p>We are a modern loan management system designed to simplify financial operations, empower businesses, and enhance customer experiences. 
+       Our platform combines reliability, scalability, and user-friendly tools to streamline loan processing, repayment tracking, and financial management. 
+       Built with clean architecture and robust technology, we aim to deliver efficiency and trust for every transaction.</p>
 </section>
+
 
 <section>
     <h2>Our Mission</h2>
@@ -64,7 +67,7 @@
 
 <section>
     <h2>Why Choose Us</h2>
-    <p>We use a clean architecture, fast processing, and a scalable framework built for real-world financial systems.</p>
+    <p>We use a clean architecture, fast processing, and a scalable built for real-world financial systems.</p>
 </section>
 
 <%-- ================= FOOTER ================= --%>
