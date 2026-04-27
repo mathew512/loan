@@ -58,7 +58,6 @@ public class DataSourceHelper {
     private static void initTables(DataSource ds) {
         Set<Class<?>> entities = new HashSet<>();
 
-        // NOTE: you can later auto-scan instead of manual listing
         entities.add(Customer.class);
         entities.add(Loan.class);
         entities.add(LoanType.class);
@@ -77,4 +76,5 @@ public class DataSourceHelper {
     // ================= INFO =================
     public static String getDbName() { return DB_NAME; }
     public static String getUser() { return USER; }
+    public static String getPassword() { return PASSWORD; }  // ✅ Added
 }
