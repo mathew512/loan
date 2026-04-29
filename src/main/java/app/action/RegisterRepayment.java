@@ -2,6 +2,8 @@ package app.action;
 
 import java.io.IOException;
 
+import app.dao.GenericDao;
+import app.dao.RepaymentDao;
 import app.model.Repayment;
 import app.utility.validation.Validate;
 import app.utility.validation.ValidatorQualifier;
@@ -23,6 +25,7 @@ import jakarta.servlet.http.HttpServletResponse;
 )
 public class RegisterRepayment extends BaseAction<Repayment> {
 
+    // Field injection
     @Inject
     @ValidatorQualifier(ValidatorQualifier.ValidationChoice.REPAYMENT)
     private Validate<Repayment> fieldValidator;
@@ -31,33 +34,37 @@ public class RegisterRepayment extends BaseAction<Repayment> {
     @Named("repaymentDS")
     private DataSource fieldDataSource;
 
+    // Constructor injection
     private final Validate<Repayment> constructorValidator;
     private final DataSource constructorDataSource;
 
     @Inject
     public RegisterRepayment(
         @ValidatorQualifier(ValidatorQualifier.ValidationChoice.REPAYMENT) Validate<Repayment> constructorValidator,
-        @Named("repaymentDS")
-         DataSource ds
+        @Named("repaymentDS") DataSource ds
     ) {
         System.out.println(">>> Constructor injection: RepaymentValidator + DataSource injected (repaymentDS)");
         this.constructorValidator = constructorValidator;
         this.constructorDataSource = ds;
     }
 
+    // Setter injection
     private Validate<Repayment> setterValidator;
     private DataSource setterDataSource;
 
     @Inject
     public void setValidatorAndDataSource(
         @ValidatorQualifier(ValidatorQualifier.ValidationChoice.REPAYMENT) Validate<Repayment> setterValidator,
-        @Named("repaymentDS") 
-        DataSource ds
+        @Named("repaymentDS") DataSource ds
     ) {
         System.out.println(">>> Setter injection: RepaymentValidator + DataSource injected (repaymentDS)");
         this.setterValidator = setterValidator;
         this.setterDataSource = ds;
     }
+
+    // ✅ Inject RepaymentDao
+    @Inject
+    private RepaymentDao repaymentDao;
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -75,5 +82,10 @@ public class RegisterRepayment extends BaseAction<Repayment> {
         } else {
             resp.sendRedirect("./repayment_lists");
         }
+    }
+
+    @Override
+    public GenericDao<Repayment, Integer> getGenericDao() {
+        return repaymentDao;   // ✅ return injected DAO
     }
 }

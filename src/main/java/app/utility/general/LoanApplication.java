@@ -14,7 +14,7 @@ public class LoanApplication {
 
     // ================= FIELD INJECTION =================
     @Inject
-    @Named("customerDS")   // ✅ FIXED
+    @Named("customerDS")   
     private DataSource fieldDataSource;
 
     // ================= CONSTRUCTOR INJECTION =================
@@ -22,7 +22,7 @@ public class LoanApplication {
 
     @Inject
     public LoanApplication(
-        @Named("customerDS") DataSource constructorDataSource   // ✅ FIXED
+        @Named("customerDS") DataSource constructorDataSource   
     ) {
         System.out.println(">>> Constructor injection: DataSource injected into LoanApplication");
         this.constructorDataSource = constructorDataSource;
@@ -33,7 +33,7 @@ public class LoanApplication {
 
     @Inject
     public void setDataSource(
-        @Named("customerDS") DataSource setterDataSource   // ✅ FIXED
+        @Named("customerDS") DataSource setterDataSource   
     ) {
         System.out.println(">>> Setter injection: DataSource injected into LoanApplication");
         this.setterDataSource = setterDataSource;
@@ -45,7 +45,7 @@ public class LoanApplication {
 
         try (Connection conn = fieldDataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(
-                     "SELECT COUNT(*) FROM customer WHERE national_id = ?")) {
+                     "SELECT COUNT(*) FROM customers WHERE national_id = ?")) {
 
             ps.setString(1, nationalId);
             ResultSet rs = ps.executeQuery();

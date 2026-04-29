@@ -1,80 +1,86 @@
 package app.utility.db;
 
+import app.utility.bootstrap.InitBootstrap;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import javax.sql.DataSource;
-import java.util.HashSet;
-import java.util.Set;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-import app.utility.db.TableGenerator;
-import app.model.*;
-
+@InitBootstrap
+@ApplicationScoped
 public class DataSourceHelper {
 
-    private static volatile HikariDataSource dataSource;
+    private volatile HikariDataSource dataSource;
 
-    private static final String HOST = "localhost";
-    private static final int PORT = 5432;
-    private static final String DB_NAME = "loan_db";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "newpassword";
+    @Inject
+    @Named("dbParamHost")
+    private  String dbParamHost;
 
-    private DataSourceHelper() {}
+    @Inject
+    @Named("dbParamPort")
+    private int dbParamPort;
 
-    public static DataSource getDataSource() {
+    @Inject
+    @Named("dbParamName")
+    private String dbParamName;
+
+    @Inject
+    @Named("dbParamUser")
+    private  String dbParamUser;
+
+    @Inject
+    @Named("dbParamPwd")
+    private String dbParamPwd;
+
+    public DataSource getDataSource() {
         if (dataSource == null) {
             synchronized (DataSourceHelper.class) {
                 if (dataSource == null) {
-                    dataSource = createDataSource();
-                    initTables(dataSource);
+                    HikariConfig config = new HikariConfig();
+
+                    config.setJdbcUrl(
+                        "jdbc:postgresql://" + dbParamHost + ":" + dbParamPort + "/" + dbParamName
+                    );
+
+                    config.setUsername(dbParamUser);
+                    config.setPassword(dbParamPwd);
+                    config.setDriverClassName("org.postgresql.Driver");
+
+                    config.setMaximumPoolSize(10);
+                    config.setMinimumIdle(2);
+                    config.setIdleTimeout(30000);
+                    config.setConnectionTimeout(30000);
+                    config.setPoolName("LoanAppPool");
+
+                    dataSource = new HikariDataSource(config);
                 }
             }
         }
         return dataSource;
     }
 
-    // ================= CREATE POOL =================
-    private static HikariDataSource createDataSource() {
-        HikariConfig config = new HikariConfig();
-
-        config.setJdbcUrl("jdbc:postgresql://" + HOST + ":" + PORT + "/" + DB_NAME);
-        config.setUsername(USER);
-        config.setPassword(PASSWORD);
-        config.setDriverClassName("org.postgresql.Driver");
-
-        config.setMaximumPoolSize(10);
-        config.setMinimumIdle(2);
-        config.setIdleTimeout(30000);
-
-        // recommended for stability
-        config.setConnectionTimeout(30000);
-        config.setPoolName("LoanAppPool");
-
-        return new HikariDataSource(config);
+    public Connection getConnection() throws SQLException {
+        return this.getDataSource().getConnection();
     }
 
-    // ================= TABLE INIT =================
-    private static void initTables(DataSource ds) {
-        Set<Class<?>> entities = new HashSet<>();
-
-        entities.add(Customer.class);
-        entities.add(Loan.class);
-        entities.add(LoanType.class);
-        entities.add(Repayment.class);
-
-        TableGenerator.generateTables(ds, entities);
+    public String getBaseUrlWithoutDB() {
+        return "jdbc:postgresql://" + dbParamHost + ":" + dbParamPort;
     }
 
-    // ================= CLEAN SHUTDOWN =================
-    public static void shutdown() {
-        if (dataSource != null && !dataSource.isClosed()) {
-            dataSource.close();
-        }
+    public String getDbName() {
+        return dbParamName;
     }
 
-    // ================= INFO =================
-    public static String getDbName() { return DB_NAME; }
-    public static String getUser() { return USER; }
-    public static String getPassword() { return PASSWORD; }  // ✅ Added
+    public String getUser() {
+        return dbParamUser;
+    }
+
+    public String getPassword() {
+        return dbParamPwd;
+    }
 }
